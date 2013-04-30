@@ -1,4 +1,4 @@
-Param([string]$rootDirectory,[string]$configName,[string]$filters)
+Param([string]$rootDirectory,[string]$configName,[string]$filters,[string]$vsConfigName)
 
 $vstestconsolepath = "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
 $dotcoverpath = "C:\BuildAgent\tools\dotCover\dotCover.exe"
@@ -6,8 +6,7 @@ $dotcovertargetexecutable = "/TargetExecutable=" + $vstestconsolepath
 $dotcoveroutput = "/Output=" + $configName + "/coverage.dcvr"
 $dotcoverfilters = "/Filters=" + $filters
 
-$testFolders = Get-ChildItem -Recurse -Force $rootDirectory | Where-Object { ($_.PSIsContainer -eq $true) -and (($_.FullName -like "*Tests\bin\DEV") -or ($_.FullName -like "*Tests\bin\x64\DEV")) } | Select-Object
-
+$testFolders = Get-ChildItem -Recurse -Force $rootDirectory | Where-Object { ($_.PSIsContainer -eq $true) -and (($_.FullName -like "*Tests\bin\" + $vsConfigName) -or ($_.FullName -like "*Tests\bin\x64\" + $vsConfigName)) } | Select-Object
 foreach ($folder in $testFolders)
 {
     #look for Fakes DLLs. If we find one we can't do code coverage on this test assembly
